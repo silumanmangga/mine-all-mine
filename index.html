@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Taman Kata Kita — My Love Mine All Mine</title>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-top: #fdf6f0;
+      --bg-bottom: #f3e5dc;
+      --card-bg: rgba(255, 255, 255, 0.84);
+      --text-main: #3d2c2e;
+      --text-muted: #7d6668;
+      --accent: #d46a7e;
+      --accent-hover: #b85266;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow-x: hidden;
+      transition: background 1.2s ease;
+    }
+
+    body.gloomy {
+      background: linear-gradient(180deg, #bcc3cc 0%, #8b94a0 100%);
+    }
+
+    body.blooming {
+      background: linear-gradient(180deg, #fff4f6 0%, #ffe0e6 100%);
+    }
+
+    /* Music Floating Control */
+    .music-pill {
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(212, 106, 126, 0.25);
+      padding: 8px 14px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-main);
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+      z-index: 50;
+      transition: transform 0.2s ease;
+    }
+
+    .music-pill:hover {
+      transform: scale(1.04);
+    }
+
+    .disc {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff 20%, #3d2c2e 25%, #3d2c2e 60%, var(--accent) 65%);
+      display: inline-block;
+    }
+
+    .disc.spinning {
+      animation: spin 4s linear infinite;
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Main Container */
+    .container {
+      width: 100%;
+      max-width: 480px;
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      border-radius: 28px;
+      padding: 28px 24px;
+      box-shadow: 0 18px 40px rgba(61, 44, 46, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      text-align: center;
+      position: relative;
+    }
+
+    h1 {
+      font-family: 'Caveat', cursive;
+      font-size: 2.3rem;
+      color: var(--accent);
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+
+    p.subtitle {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 22px;
+      line-height: 1.5;
+    }
+
+    /* Setup Screen */
+    .setup-group {
+      margin-bottom: 18px;
+      text-align: left;
+    }
+
+    .setup-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .options-grid.two-col {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .option-card {
+      background: #fff;
+      border: 2px solid #eee3e0;
+      border-radius: 16px;
+      padding: 12px 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .option-card:hover {
+      border-color: #e6a8b4;
+    }
+
+    .option-card.selected {
+      border-color: var(--accent);
+      background: #fff5f7;
+      box-shadow: 0 4px 12px rgba(212, 106, 126, 0.15);
+    }
+
+    .option-emoji {
+      font-size: 1.6rem;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .option-name {
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    .btn-primary {
+      width: 100%;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 14px;
+      border-radius: 16px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.2s ease, transform 0.15s ease;
+      box-shadow: 0 8px 20px rgba(212, 106, 126, 0.25);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    /* Garden / Play Screen */
+    #garden-screen {
+      display: none;
+    }
+
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 10px;
+      background: #eadcd9;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 50%;
+      background: linear-gradient(90deg, #e88d9e, #d46a7e);
+      border-radius: 999px;
+      transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.6s ease;
+    }
+
+    /* Visual Stage */
+    .stage {
+      position: relative;
+      height: 300px;
+      width: 100%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(242,226,218,0.45) 100%);
+      border-radius: 22px;
+      margin-bottom: 16px;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      border: 1px solid rgba(255,255,255,0.8);
+      transition: background 1s ease;
+    }
+
+    .stage.rainy-sky {
+      background: linear-gradient(180deg, rgba(92, 104, 120, 0.45) 0%, rgba(145, 155, 168, 0.45) 100%);
+    }
+
+    .stage.sunny-sky {
+      background: linear-gradient(180deg, rgba(255, 243, 224, 0.65) 0%, rgba(255, 224, 232, 0.5) 100%);
+    }
+
+    /* Floating Whisper Bubble */
+    .whisper-bubble {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(10px);
+      background: rgba(255, 255, 255, 0.94);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-main);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+      opacity: 0;
+      pointer-events: none;
+      max-width: 85%;
+      z-index: 25;
+      transition: all 0.5s ease;
+    }
+
+    .whisper-bubble.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Plant SVG Wrapper */
+    .plant-wrapper {
+      width: 260px;
+      height: 260px;
+      position: relative;
+      z-index: 10;
+      transition: filter 0.8s ease, transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform-origin: bottom center;
+    }
+
+    /* Plant States */
+    .state-dead {
+      filter: grayscale(90%) brightness(62%) sepia(30%);
+      transform: scaleY(0.8) rotate(13deg);
+    }
+
+    .state-wilted {
+      filter: grayscale(50%) brightness(82%);
+      transform: scaleY(0.89) rotate(6deg);
+    }
+
+    .state-normal {
+      filter: none;
+      transform: scale(1) rotate(0deg);
+    }
+
+    .state-bloom {
+      filter: saturate(120%) brightness(104%);
+      transform: scale(1.05);
+    }
+
+    .state-full {
+      filter: saturate(135%) brightness(108%) drop-shadow(0 0 14px rgba(255, 165, 185, 0.6));
+      transform: scale(1.1);
+    }
+
+    /* Extra side blooms visibility */
+    .extra-bloom {
+      opacity: 0;
+      transform: scale(0);
+      transform-origin: center;
+      transition: all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .show-extra .extra-bloom {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .show-super .super-bloom {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* Input Controls */
+    .chat-box {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 13px 16px;
+      border-radius: 14px;
+      border: 2px solid #eadcd9;
+      font-family: inherit;
+      font-size: 0.9rem;
+      outline: none;
+      background: #fff;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--accent);
+    }
+
+    .btn-send {
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      padding: 0 18px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-send:hover {
+      background: var(--accent-hover);
+    }
+
+    .reaction-text {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      min-height: 20px;
+      font-style: italic;
+    }
+
+    /* Special Action Buttons (Full Bloom / Dead) */
+    .special-action {
+      display: none;
+      margin-top: 14px;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .btn-secret {
+      background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+      color: white;
+      border: none;
+      padding: 13px 20px;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      width: 100%;
+      box-shadow: 0 8px 20px rgba(255, 117, 140, 0.35);
+    }
+
+    .btn-revive {
+      background: #6c757d;
+      color: white;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 14px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    /* Modal Letter */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(45, 30, 32, 0.65);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 100;
+    }
+
+    .letter-card {
+      background: #fffaf7;
+      max-width: 420px;
+      width: 100%;
+      padding: 32px 26px;
+      border-radius: 24px;
+      text-align: left;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+      border: 1px solid #f2dcd6;
+      position: relative;
+      animation: popUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes popUp {
+      from { transform: scale(0.85); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .letter-card h2 {
+      font-family: 'Caveat', cursive;
+      font-size: 2rem;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .letter-body {
+      font-size: 0.92rem;
+      line-height: 1.7;
+      color: #4a3739;
+      margin-bottom: 20px;
+      white-space: pre-line;
+    }
+
+    .close-letter {
+      background: #f3e5dc;
+      color: var(--text-main);
+      border: none;
+      padding: 10px 18px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    /* WEATHER & ATMOSPHERE EFFECTS */
+    /* 1. Raindrops */
+    .raindrop {
+      position: absolute;
+      top: -20px;
+      width: 2px;
+      height: 16px;
+      background: linear-gradient(180deg, rgba(255,255,255,0), rgba(110, 138, 173, 0.75));
+      border-radius: 2px;
+      pointer-events: none;
+      z-index: 18;
+      animation: rainFall linear forwards;
+    }
+
+    @keyframes rainFall {
+      0% { transform: translateY(0) rotate(8deg); opacity: 0.85; }
+      100% { transform: translateY(320px) rotate(8deg); opacity: 0.2; }
+    }
+
+    /* 2. Butterflies */
+    .butterfly {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      pointer-events: none;
+      z-index: 22;
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+
+    .butterfly.visible {
+      opacity: 1;
+    }
+
+    .butterfly-wing-left, .butterfly-wing-right {
+      transform-origin: center;
+      animation: flap 0.35s ease-in-out infinite alternate;
+    }
+
+    @keyframes flap {
+      0% { transform: scaleX(1); }
+      100% { transform: scaleX(0.35); }
+    }
+
+    #butterfly-1 {
+      top: 75px;
+      left: 55px;
+      animation: floatPath1 7s ease-in-out infinite;
+    }
+
+    #butterfly-2 {
+      top: 95px;
+      right: 50px;
+      animation: floatPath2 8.5s ease-in-out infinite;
+    }
+
+    @keyframes floatPath1 {
+      0%, 100% { transform: translate(0, 0) rotate(-10deg); }
+      25% { transform: translate(35px, -25px) rotate(12deg); }
+      50% { transform: translate(75px, -5px) rotate(-5deg); }
+      75% { transform: translate(25px, 15px) rotate(-18deg); }
+    }
+
+    @keyframes floatPath2 {
+      0%, 100% { transform: translate(0, 0) rotate(12deg); }
+      33% { transform: translate(-45px, -30px) rotate(-15deg); }
+      66% { transform: translate(-75px, 10px) rotate(8deg); }
+    }
+
+    /* 3. Falling Petals Particle */
+    .petal {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: #ff9eb5;
+      border-radius: 150% 0 150% 0;
+      opacity: 0.75;
+      pointer-events: none;
+      z-index: 15;
+      animation: fall linear forwards;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(-20px) rotate(0deg); opacity: 0.9; }
+      100% { transform: translateY(310px) rotate(360deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Audio (Letakkan file mitski.mp3 di folder yang sama di GitHub) -->
+  <audio id="bg-music" loop preload="auto">
+    <source src="mitski.mp3" type="audio/mpeg">
+  </audio>
+
+  <div class="music-pill" onclick="toggleMusic()" title="Putar / Jeda Musik">
+    <span class="disc" id="music-disc"></span>
+    <span id="music-label">My Love Mine All Mine</span>
+  </div>
+
+  <div class="container">
+    <!-- SCREEN 1: PILIH BUNGA & MEDIA TANAM -->
+    <div id="setup-screen">
+      <h1>Taman Kata Kita</h1>
+      <p class="subtitle">Pilih bibit bunga dan tempat tumbuhnya. Katakan hal-hal baik untuk membuatnya mekar, atau lihat apa yang terjadi jika ia mendengar kata yang menyakitkan.</p>
+
+      <div class="setup-group">
+        <span class="setup-label">1. Pilih Bibit Bunga</span>
+        <div class="options-grid" id="flower-options">
+          <div class="option-card selected" data-value="rose" onclick="selectOption('flower', this)">
+            <span class="option-emoji">🌹</span>
+            <span class="option-name">Mawar Merah</span>
+          </div>
+          <div class="option-card" data-value="sunflower" onclick="selectOption('flower', this)">
+            <span class="option-emoji">🌻</span>
+            <span class="option-name">Matahari</span>
+          </div>
+          <div class="option-card" data-value="tulip" onclick="selectOption('flower', this)">
+            <span class="option-emoji">🌷</span>
+            <span class="option-name">Tulip Pink</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="setup-group">
+        <span class="setup-label">2. Pilih Media Tanam</span>
+        <div class="options-grid two-col" id="medium-options">
+          <div class="option-card selected" data-value="pot" onclick="selectOption('medium', this)">
+            <span class="option-emoji">🪴</span>
+            <span class="option-name">Pot Terakota</span>
+          </div>
+          <div class="option-card" data-value="ground" onclick="selectOption('medium', this)">
+            <span class="option-emoji">🌱</span>
+            <span class="option-name">Tanah Taman</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="startGarden()">Mulai Tanam & Putar Lagu</button>
+    </div>
+
+    <!-- SCREEN 2: INTERAKSI MERAWAT BUNGA -->
+    <div id="garden-screen">
+      <h1>Taman Kata Kita</h1>
+      
+      <div class="status-bar">
+        <span id="status-label">Kondisi: Tumbuh Normal (50%)</span>
+        <span id="flower-badge">🌹 Mawar</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+
+      <div class="stage" id="stage">
+        <div class="whisper-bubble" id="whisper-bubble">""</div>
+
+        <!-- Animated Butterflies (Hidden until Bloom) -->
+        <svg class="butterfly" id="butterfly-1" viewBox="0 0 32 32">
+          <g class="butterfly-wing-left">
+            <path d="M16 16 C6 4, 2 14, 10 20 C6 24, 12 28, 16 20 Z" fill="#ffb703" opacity="0.9"/>
+          </g>
+          <g class="butterfly-wing-right">
+            <path d="M16 16 C26 4, 30 14, 22 20 C26 24, 20 28, 16 20 Z" fill="#fb8500" opacity="0.9"/>
+          </g>
+          <line x1="16" y1="11" x2="16" y2="23" stroke="#3d2c2e" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+
+        <svg class="butterfly" id="butterfly-2" viewBox="0 0 32 32">
+          <g class="butterfly-wing-left">
+            <path d="M16 16 C6 4, 2 14, 10 20 C6 24, 12 28, 16 20 Z" fill="#ff8fa3" opacity="0.9"/>
+          </g>
+          <g class="butterfly-wing-right">
+            <path d="M16 16 C26 4, 30 14, 22 20 C26 24, 20 28, 16 20 Z" fill="#ff4d6d" opacity="0.9"/>
+          </g>
+          <line x1="16" y1="11" x2="16" y2="23" stroke="#3d2c2e" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+
+        <!-- SVG Dynamic Plant -->
+        <div class="plant-wrapper state-normal" id="plant-wrapper">
+          <svg viewBox="0 0 260 260" width="100%" height="100%" id="plant-svg">
+            <!-- Stems & Leaves -->
+            <g id="stems">
+              <path d="M130 205 Q128 150 130 95" stroke="#4a7c59" stroke-width="6" fill="none" stroke-linecap="round"/>
+              <path class="extra-bloom" d="M130 165 Q95 145 80 115" stroke="#4a7c59" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+              <path class="extra-bloom" d="M130 155 Q165 135 180 110" stroke="#4a7c59" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+              
+              <!-- Leaves -->
+              <path d="M130 175 Q105 165 100 180 Q115 188 130 175 Z" fill="#5c946e"/>
+              <path d="M130 145 Q155 135 160 150 Q145 158 130 145 Z" fill="#5c946e"/>
+              <path class="extra-bloom" d="M102 142 Q82 135 78 148 Q90 154 102 142 Z" fill="#68a67c"/>
+              <path class="extra-bloom" d="M158 132 Q178 125 182 138 Q170 144 158 132 Z" fill="#68a67c"/>
+            </g>
+
+            <!-- Flower Heads Container -->
+            <g id="flower-heads"></g>
+
+            <!-- Medium Container (Pot or Ground) -->
+            <g id="medium-layer"></g>
+          </svg>
+        </div>
+      </div>
+
+      <div class="chat-box">
+        <input type="text" id="word-input" placeholder="Bisikkan sesuatu pada bunganya..." autocomplete="off" onkeypress="handleKeyPress(event)" />
+        <button class="btn-send" onclick="speakToFlower()">Kirim</button>
+      </div>
+
+      <div class="reaction-text" id="reaction-text">Coba ketik kata-kata lembut, pujian, atau rasa sayang...</div>
+
+      <!-- Secret Letter Button (Appears at 100%) -->
+      <div class="special-action" id="bloom-action">
+        <button class="btn-secret" onclick="openLetter()">✨ Bunganya Mekar Sempurna! Buka Surat Rahasia ✨</button>
+      </div>
+
+      <!-- Revive Button (Appears at 0%) -->
+      <div class="special-action" id="dead-action">
+        <button class="btn-revive" onclick="reviveFlower()">🥀 Bunganya Layu... Tanam Ulang & Minta Maaf</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECRET LETTER MODAL (EDIT ISI SURAT DI SINI) -->
+  <div class="modal-overlay" id="letter-modal">
+    <div class="letter-card">
+      <h2>Untuk Kamu, Pemilik Hatiku</h2>
+      <div class="letter-body" id="custom-letter-text">
+        Sama seperti bunga ini yang mekar karena kata-kata baikmu, aku juga selalu tumbuh dan merasa cukup setiap kali ada di dekatmu.
+
+        Seperti lagu Mitski yang lagi muter sekarang—di dunia yang fana dan penuh hal yang datang lalu pergi, satu-satunya hal yang benar-benar aku banggakan dan ingin aku jaga selamanya adalah rasa sayangku ke kamu.
+
+        Terima kasih sudah selalu lembut, sabar, dan jadi rumah paling nyaman. ❤️
+      </div>
+      <button class="close-letter" onclick="closeLetter()">Simpan & Tutup Surat</button>
+    </div>
+  </div>
+
+  <script>
+    // State Variables
+    let selectedFlower = 'rose';
+    let selectedMedium = 'pot';
+    let health = 50; // 0 to 100
+    let isPlaying = false;
+    let petalInterval = null;
+    let rainInterval = null;
+    let burstRainTimeout = null;
+
+    // Kamus Kata Positif & Negatif
+    const positiveWords = [
+      "sayang", "cinta", "love", "makasih", "terima kasih", "semangat", "cantik",
+      "ganteng", "manis", "hebat", "bangga", "kangen", "rindu", "maaf", "sabar",
+      "lucu", "baik", "keren", "sukses", "sehat", "bahagia", "peluk", "cium",
+      "imut", "gemes", "senyum", "indah", "rumah", "nyaman", "selamanya", "setia",
+      "peduli", "kuat", "pintar", "berharga", "spesial", "istimewa", "hangat", "tenang"
+    ];
+
+    const negativeWords = [
+      "benci", "hate", "jelek", "bodoh", "bego", "tolol", "capek", "muak",
+      "pergi", "putus", "marah", "kesel", "kesal", "males", "malas", "buruk", "gagal",
+      "anjing", "babi", "bangsat", "tai", "sialan", "nyebelin", "berisik", "bacot",
+      "mati", "hancur", "bosan", "bosen", "egois", "jahat", "kasar", "hilang", "jauh"
+    ];
+
+    // Option Selection UI
+    function selectOption(type, el) {
+      const parentId = type === 'flower' ? 'flower-options' : 'medium-options';
+      document.querySelectorAll(`#${parentId} .option-card`).forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+
+      if (type === 'flower') selectedFlower = el.dataset.value;
+      if (type === 'medium') selectedMedium = el.dataset.value;
+    }
+
+    // Audio Controller
+    function toggleMusic() {
+      const audio = document.getElementById('bg-music');
+      const disc = document.getElementById('music-disc');
+      if (audio.paused) {
+        audio.play().then(() => {
+          isPlaying = true;
+          disc.classList.add('spinning');
+        }).catch(() => {});
+      } else {
+        audio.pause();
+        isPlaying = false;
+        disc.classList.remove('spinning');
+      }
+    }
+
+    // Start Garden
+    function startGarden() {
+      document.getElementById('setup-screen').style.display = 'none';
+      document.getElementById('garden-screen').style.display = 'block';
+
+      const names = { rose: '🌹 Mawar', sunflower: '🌻 Matahari', tulip: '🌷 Tulip' };
+      document.getElementById('flower-badge').textContent = names[selectedFlower];
+
+      renderMedium();
+      renderFlowerHeads();
+      updateVisualState();
+
+      // Auto-play Mitski on user interaction
+      const audio = document.getElementById('bg-music');
+      audio.volume = 0.65;
+      audio.play().then(() => {
+        isPlaying = true;
+        document.getElementById('music-disc').classList.add('spinning');
+      }).catch(() => {
+        console.log("Pastikan file mitski.mp3 ada di folder yang sama.");
+      });
+    }
+
+    // Render Pot or Ground
+    function renderMedium() {
+      const layer = document.getElementById('medium-layer');
+      if (selectedMedium === 'pot') {
+        layer.innerHTML = `
+          <ellipse cx="130" cy="202" rx="46" ry="9" fill="#4a3226" />
+          <path d="M84 202 L96 254 L164 254 L176 202 Z" fill="#c86d51" />
+          <rect x="78" y="196" width="104" height="12" rx="5" fill="#b0583d" />
+        `;
+      } else {
+        layer.innerHTML = `
+          <path d="M20 255 Q130 185 240 255 Z" fill="#6b4c3b" />
+          <path d="M45 255 Q130 202 215 255 Z" fill="#573d2f" />
+          <path d="M70 225 L65 213 L73 221 L78 211 L78 225 Z" fill="#5c946e" />
+          <path d="M185 227 L182 215 L189 223 L194 214 L192 227 Z" fill="#5c946e" />
+        `;
+      }
+    }
+
+    // Render Flower Vector Artwork
+    function renderFlowerHeads() {
+      const container = document.getElementById('flower-heads');
+
+      if (selectedFlower === 'rose') {
+        container.innerHTML = `
+          <g transform="translate(130, 88)">
+            <circle r="26" fill="#d9385a" />
+            <circle r="19" fill="#e84a6b" />
+            <path d="M-12 -4 Q0 -18 12 -4 Q15 10 0 14 Q-15 10 -12 -4 Z" fill="#b82544" />
+            <path d="M-7 -2 Q0 -10 7 -2 Q8 6 0 8 Q-8 6 -7 -2 Z" fill="#ff7592" />
+          </g>
+          <g class="extra-bloom" transform="translate(78, 112)">
+            <circle r="18" fill="#d9385a" />
+            <circle r="12" fill="#e84a6b" />
+            <circle r="6" fill="#ff7592" />
+          </g>
+          <g class="extra-bloom" transform="translate(182, 106)">
+            <circle r="19" fill="#d9385a" />
+            <circle r="13" fill="#e84a6b" />
+            <circle r="6" fill="#ff7592" />
+          </g>
+          <g class="extra-bloom super-bloom" transform="translate(104, 68)">
+            <circle r="13" fill="#e84a6b" />
+            <circle r="6" fill="#ff8fa7" />
+          </g>
+          <g class="extra-bloom super-bloom" transform="translate(158, 66)">
+            <circle r="14" fill="#e84a6b" />
+            <circle r="6" fill="#ff8fa7" />
+          </g>
+        `;
+      } else if (selectedFlower === 'sunflower') {
+        const makeSunflower = (x, y, scale) => `
+          <g transform="translate(${x}, ${y}) scale(${scale})">
+            <g fill="#f5b82e">
+              <ellipse rx="8" ry="30" transform="rotate(0)" />
+              <ellipse rx="8" ry="30" transform="rotate(30)" />
+              <ellipse rx="8" ry="30" transform="rotate(60)" />
+              <ellipse rx="8" ry="30" transform="rotate(90)" />
+              <ellipse rx="8" ry="30" transform="rotate(120)" />
+              <ellipse rx="8" ry="30" transform="rotate(150)" />
+            </g>
+            <circle r="15" fill="#593725" />
+            <circle r="10" fill="#3d2417" />
+          </g>
+        `;
+        container.innerHTML = `
+          ${makeSunflower(130, 88, 1)}
+          <g class="extra-bloom">${makeSunflower(78, 112, 0.7)}</g>
+          <g class="extra-bloom">${makeSunflower(182, 106, 0.72)}</g>
+          <g class="extra-bloom super-bloom">${makeSunflower(105, 65, 0.52)}</g>
+          <g class="extra-bloom super-bloom">${makeSunflower(156, 65, 0.55)}</g>
+        `;
+      } else if (selectedFlower === 'tulip') {
+        const makeTulip = (x, y, scale) => `
+          <g transform="translate(${x}, ${y}) scale(${scale})">
+            <path d="M-20 -15 C-20 18, 20 18, 20 -15 L12 -5 L0 -22 L-12 -5 Z" fill="#f26b8a" />
+            <path d="M-12 -12 C-12 15, 12 15, 12 -12 L0 -24 Z" fill="#ff8da6" />
+          </g>
+        `;
+        container.innerHTML = `
+          ${makeTulip(130, 90, 1.15)}
+          <g class="extra-bloom">${makeTulip(78, 114, 0.82)}</g>
+          <g class="extra-bloom">${makeTulip(182, 108, 0.85)}</g>
+          <g class="extra-bloom super-bloom">${makeTulip(104, 68, 0.65)}</g>
+          <g class="extra-bloom super-bloom">${makeTulip(156, 68, 0.65)}</g>
+        `;
+      }
+    }
+
+    function handleKeyPress(e) {
+      if (e.key === 'Enter') speakToFlower();
+    }
+
+    // Analyze Words & Update Score
+    function speakToFlower() {
+      const input = document.getElementById('word-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const lower = text.toLowerCase();
+      let delta = 0;
+      let posCount = 0;
+      let negCount = 0;
+
+      positiveWords.forEach(word => {
+        if (lower.includes(word)) {
+          posCount++;
+          delta += 14;
+        }
+      });
+
+      negativeWords.forEach(word => {
+        if (lower.includes(word)) {
+          negCount++;
+          delta -= 22;
+        }
+      });
+
+      if (posCount === 0 && negCount === 0) {
+        delta = text.length >= 6 ? 5 : 2;
+      }
+
+      if (posCount > 0 && text.split(' ').length >= 4) {
+        delta += 6;
+      }
+
+      health = Math.max(0, Math.min(100, health + delta));
+
+      showWhisper(text);
+
+      const reactionEl = document.getElementById('reaction-text');
+      if (delta < 0) {
+        reactionEl.textContent = "Kata-katamu terasa dingin... langit mendung dan kelopaknya mulai layu.";
+        reactionEl.style.color = "#4a5568";
+        triggerTemporaryRain(); // Langsung turun hujan begitu kata negatif diketik
+      } else if (delta >= 14) {
+        reactionEl.textContent = "Bunganya menyerap kehangatanmu dan perlahan mekar lebih cantik!";
+        reactionEl.style.color = "#b84a62";
+      } else {
+        reactionEl.textContent = "Ia mendengarkan bisikanmu dengan tenang...";
+        reactionEl.style.color = "#7d6668";
+      }
+
+      input.value = '';
+      updateVisualState();
+    }
+
+    function showWhisper(msg) {
+      const bubble = document.getElementById('whisper-bubble');
+      bubble.textContent = `"${msg}"`;
+      bubble.classList.add('show');
+      clearTimeout(window.whisperTimer);
+      window.whisperTimer = setTimeout(() => {
+        bubble.classList.remove('show');
+      }, 2800);
+    }
+
+    // Update UI & Plant Visuals + Weather
+    function updateVisualState() {
+      const fill = document.getElementById('progress-fill');
+      const label = document.getElementById('status-label');
+      const wrapper = document.getElementById('plant-wrapper');
+      const svg = document.getElementById('plant-svg');
+      const stage = document.getElementById('stage');
+      const bloomAction = document.getElementById('bloom-action');
+      const deadAction = document.getElementById('dead-action');
+      const b1 = document.getElementById('butterfly-1');
+      const b2 = document.getElementById('butterfly-2');
+
+      fill.style.width = `${health}%`;
+
+      // Reset states
+      wrapper.className = 'plant-wrapper';
+      svg.classList.remove('show-extra', 'show-super');
+      document.body.classList.remove('gloomy', 'blooming');
+      stage.classList.remove('rainy-sky', 'sunny-sky');
+      bloomAction.style.display = 'none';
+      deadAction.style.display = 'none';
+      b1.classList.remove('visible');
+      b2.classList.remove('visible');
+
+      if (health === 0) {
+        label.textContent = `Kondisi: Layu & Mati (0%)`;
+        fill.style.background = '#6c757d';
+        wrapper.classList.add('state-dead');
+        document.body.classList.add('gloomy');
+        stage.classList.add('rainy-sky');
+        deadAction.style.display = 'block';
+        startContinuousRain();
+        stopPetals();
+      } else if (health <= 35) {
+        label.textContent = `Kondisi: Mulai Layu (${health}%)`;
+        fill.style.background = '#8c96a3';
+        wrapper.classList.add('state-wilted');
+        document.body.classList.add('gloomy');
+        stage.classList.add('rainy-sky');
+        startContinuousRain();
+        stopPetals();
+      } else if (health <= 65) {
+        label.textContent = `Kondisi: Tumbuh Normal (${health}%)`;
+        fill.style.background = 'linear-gradient(90deg, #e88d9e, #d46a7e)';
+        wrapper.classList.add('state-normal');
+        stopContinuousRain();
+        stopPetals();
+      } else if (health < 100) {
+        label.textContent = `Kondisi: Mekar Bercabang (${health}%)`;
+        fill.style.background = 'linear-gradient(90deg, #ff758c, #ff7eb3)';
+        wrapper.classList.add('state-bloom');
+        svg.classList.add('show-extra');
+        document.body.classList.add('blooming');
+        stage.classList.add('sunny-sky');
+        stopContinuousRain();
+        stopPetals();
+        if (health >= 75) {
+          b1.classList.add('visible'); // Kupu-kupu pertama datang
+        }
+      } else {
+        // 100% Full Bloom!
+        label.textContent = `Kondisi: Mekar Sempurna! (100%)`;
+        fill.style.background = 'linear-gradient(90deg, #ff5e7e, #ff96b2)';
+        wrapper.classList.add('state-full');
+        svg.classList.add('show-extra', 'show-super');
+        document.body.classList.add('blooming');
+        stage.classList.add('sunny-sky');
+        bloomAction.style.display = 'block';
+        b1.classList.add('visible');
+        b2.classList.add('visible'); // Kedua kupu-kupu terbang bersama
+        stopContinuousRain();
+        startPetals();
+      }
+    }
+
+    function reviveFlower() {
+      health = 50;
+      document.getElementById('reaction-text').textContent = "Hujan mulai reda. Gak apa-apa, kita selalu bisa merawatnya lagi dari awal.";
+      document.getElementById('reaction-text').style.color = "#7d6668";
+      stopContinuousRain();
+      updateVisualState();
+    }
+
+    // Rain Effects
+    function spawnRaindrop() {
+      const stage = document.getElementById('stage');
+      const drop = document.createElement('div');
+      drop.classList.add('raindrop');
+      drop.style.left = Math.random() * 100 + '%';
+      drop.style.animationDuration = (Math.random() * 0.4 + 0.55) + 's';
+      stage.appendChild(drop);
+      setTimeout(() => drop.remove(), 1100);
+    }
+
+    function triggerTemporaryRain() {
+      const stage = document.getElementById('stage');
+      stage.classList.add('rainy-sky');
+      let burst = setInterval(spawnRaindrop, 65);
+      clearTimeout(burstRainTimeout);
+      burstRainTimeout = setTimeout(() => {
+        clearInterval(burst);
+        if (health > 35) {
+          stage.classList.remove('rainy-sky');
+        }
+      }, 2600);
+    }
+
+    function startContinuousRain() {
+      if (rainInterval) return;
+      rainInterval = setInterval(spawnRaindrop, 75);
+    }
+
+    function stopContinuousRain() {
+      clearInterval(rainInterval);
+      rainInterval = null;
+    }
+
+    // Falling Petals Effect on 100%
+    function startPetals() {
+      if (petalInterval) return;
+      const stage = document.getElementById('stage');
+      petalInterval = setInterval(() => {
+        const petal = document.createElement('div');
+        petal.classList.add('petal');
+        petal.style.left = Math.random() * 100 + '%';
+        petal.style.animationDuration = (Math.random() * 2 + 2.5) + 's';
+        petal.style.background = selectedFlower === 'sunflower' ? '#ffd166' : '#ff9eb5';
+        stage.appendChild(petal);
+        setTimeout(() => petal.remove(), 4500);
+      }, 450);
+    }
+
+    function stopPetals() {
+      clearInterval(petalInterval);
+      petalInterval = null;
+    }
+
+    // Modal Controls
+    function openLetter() {
+      document.getElementById('letter-modal').style.display = 'flex';
+    }
+
+    function closeLetter() {
+      document.getElementById('letter-modal').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
